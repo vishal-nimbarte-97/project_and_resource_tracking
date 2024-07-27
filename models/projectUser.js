@@ -31,6 +31,7 @@ const ProjectUser = sequelize.define('ProjectUser', {
 // Relationships
 Project.hasMany(ProjectUser, { foreignKey: 'project_id' });
 User.hasMany(ProjectUser, { foreignKey: 'user_id' });
+
 ProjectUser.belongsTo(Project, { foreignKey: 'project_id' });
 ProjectUser.belongsTo(User, { foreignKey: 'user_id' });
 
