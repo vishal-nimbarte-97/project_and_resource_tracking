@@ -29,10 +29,13 @@ const ProjectUser = sequelize.define('ProjectUser', {
 });
 
 // Relationships
-Project.hasMany(ProjectUser, { foreignKey: 'project_id' });
-User.hasMany(ProjectUser, { foreignKey: 'user_id' });
+// Project.hasMany(ProjectUser, { foreignKey: 'project_id' });
+// User.hasMany(ProjectUser, { foreignKey: 'user_id' });
 
-ProjectUser.belongsTo(Project, { foreignKey: 'project_id' });
-ProjectUser.belongsTo(User, { foreignKey: 'user_id' });
+// ProjectUser.belongsTo(Project, { foreignKey: 'project_id' });
+// ProjectUser.belongsTo(User, { foreignKey: 'user_id' });
+
+Project.belongsToMany(User, { through: ProjectUser, foreignKey: 'project_id' });
+User.belongsToMany(Project, { through: ProjectUser, foreignKey: 'user_id' });
 
 module.exports = ProjectUser;

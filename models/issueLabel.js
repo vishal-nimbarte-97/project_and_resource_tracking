@@ -31,10 +31,17 @@ const IssueLabel = sequelize.define('IssueLabel', {
 });
 
 // Define associations
-Issue.hasMany(IssueLabel, { foreignKey: 'issue_id', onDelete: 'CASCADE' });
-IssueLabel.belongsTo(Issue, { foreignKey: 'issue_id' });
+// Issue.hasMany(IssueLabel, { foreignKey: 'issue_id', onDelete: 'CASCADE' });
+// IssueLabel.belongsTo(Issue, { foreignKey: 'issue_id' });
 
-Label.hasMany(IssueLabel, { foreignKey: 'label_id', onDelete: 'CASCADE' });
-IssueLabel.belongsTo(Label, { foreignKey: 'label_id' });
+// Label.hasMany(IssueLabel, { foreignKey: 'label_id', onDelete: 'CASCADE' });
+// IssueLabel.belongsTo(Label, { foreignKey: 'label_id' });
+
+//IssueLables.js
+
+// Define associations
+Issue.belongsToMany(Label, { through: IssueLabel, foreignKey: 'issue_id' });
+Label.belongsToMany(Issue, { through: IssueLabel, foreignKey: 'label_id' });
+
 
 module.exports = IssueLabel;

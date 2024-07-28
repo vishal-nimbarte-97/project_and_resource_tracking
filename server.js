@@ -30,9 +30,9 @@ app.use('/attachments', attachmentRoutes);
 app.use('/labels', labelRoutes);
 app.use('/issueLabels', issueLabelRoutes); // Add this line
 
-app.get('/', (req, res) => {
-    res.send("Hello, World!");
-});
+// app.get('/', (req, res) => {
+//     res.send("Hello, World!");
+// });
 
 app.listen(port, async () => {
     try {
