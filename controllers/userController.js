@@ -1,59 +1,76 @@
+const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/userRepository');
 
-// Create a new user
-const createUser = async (req, res) => {
-    try {
-        const user = await userRepository.createUser(req.body);
-        res.status(201).json(user);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
+const saltRounds = 10;
 
-// Get all users
 const getAllUsers = async (req, res) => {
-    try {
-        const users = await userRepository.getAllUsers();
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+    const users = await userRepository.getAllUsers();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// Get a user by ID
 const getUserById = async (req, res) => {
-    try {
-        const user = await userRepository.getUserById(req.params.id);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+  try {
+    const user = await userRepository.getUserById(req.params.id);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: 'User not found' });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// Update a user
+const createUser = async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+    const newUser = { ...req.body, password: hashedPassword };
+    const createdUser = await userRepository.createUser(newUser);
+    res.status(201).json(createdUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const updateUser = async (req, res) => {
-    try {
-        const user = await userRepository.updateUser(req.params.id, req.body);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+  try {
+    const updatedData = { ...req.body };
+    if (req.body.password) {
+      const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+      updatedData.password = hashedPassword;
     }
+    const updatedUser = await userRepository.updateUser(req.params.id, updatedData);
+    if (updatedUser) {
+      res.status(200).json(updatedUser);
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// Delete a user
 const deleteUser = async (req, res) => {
-    try {
-        const result = await userRepository.deleteUser(req.params.id);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
+  try {
+    const deleted = await userRepository.deleteUser(req.params.id);
+    if (deleted) {
+      res.status(204).json();
+    } else {
+      res.status(404).json({ error: 'User not found' });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = {
-    createUser,
-    getAllUsers,
-    getUserById,
-    updateUser,
-    deleteUser
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser
 };
